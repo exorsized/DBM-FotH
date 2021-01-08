@@ -1,0 +1,2 @@
+--collapsingPlayerCD[1] = "Varix RaidWall + AM"
+--collapsingPlayerCD[2] = "Vivon AM + RaidWall"
