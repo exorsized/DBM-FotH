@@ -727,6 +727,7 @@ function mod:UNIT_HEALTH(uId)
 	end
 	if showCollapsingHealth and self:GetUnitCreatureId(uId) == 32871 and UnitHealth(uId) / UnitHealthMax(uId) <= 0.20 then
 		showCollapsingHealth = false
+	end
 end
 
 function mod:UNIT_DIED(args)
