@@ -5,7 +5,7 @@ mod:SetRevision(("$Revision: 4154 $"):sub(12, -3))
 mod:SetCreatureID(32927, 32867, 32857)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 
--- mod:RegisterCombat("combat", 32867, 32927, 32857)
+mod:RegisterCombat("combat", 32867, 32927, 32857)
 mod:RegisterCombat("yell", L.YellPull1)
 mod:RegisterCombat("yell", L.YellPull2)
 mod:RegisterCombat("yell", L.YellPull3)
@@ -31,7 +31,7 @@ local warnSupercharge			= mod:NewSpellAnnounce(61920, 3)
 -- High Voltage ... 63498
 local warnChainlight			= mod:NewSpellAnnounce(64215, 1)
 local timerOverload				= mod:NewCastTimer(6, 63481)
-local timerOverloadCooldown		= mod:NewCDTimer(60, 63481)
+local timerOverloadCooldown		= mod:NewCDTimer(65, 63481)
 local timerLightningWhirl		= mod:NewCastTimer(5, 63483)
 local specwarnLightningTendrils	= mod:NewSpecialWarningRun(63486)
 local timerLightningTendrils	= mod:NewBuffActiveTimer(27, 63486)
@@ -77,19 +77,13 @@ local steelbreakerAlive = true
 function mod:OnCombatStart(delay)
 	enrageTimer:Start()
 	timerRuneofPower:Start(20)
-	timerFusionPunchCooldown:Start(18)
-	timerOverloadCooldown:Start(60)
-	self:ScheduleMethod(20, "RuneOfPower")
+	timerFusionPunchCooldown:Start(21)
+	timerOverloadCooldown:Start(45)
 	table.wipe(disruptTargets)
 	disruptIcon = 7
 	runemasterAlive = true
 	brundirAlive = true
 	steelbreakerAlive = true
-end
-
-function mod:RuneOfPower()
-	timerRuneofPower:Start()
-	self:ScheduleMethod(60, "RuneOfPower")
 end
 
 function mod:RuneTarget()
@@ -118,6 +112,9 @@ function mod:SPELL_CAST_START(args)
 	elseif args:IsSpellID(62273) then				-- Rune of Summoning
 		warnRuneofSummoning:Show()
 		timerRuneofSummoning:Start()
+	elseif args:IsSpellID(64321, 61973) then	-- Rune of Power
+		self:ScheduleMethod(0.1, "RuneTarget")
+		timerRuneofPower:Start()
 	end
 end
 
@@ -126,9 +123,6 @@ function mod:SPELL_CAST_SUCCESS(args)
 		warnRuneofDeath:Show()
 		timerRuneofDeathCD:Start()
 		warnRuneofDeathIn10Sec:Schedule(25)
-	elseif args:IsSpellID(64321, 61974) then	-- Rune of Power
-		self:ScheduleMethod(0.1, "RuneTarget")
-		timerRuneofPower:Start()
 	elseif args:IsSpellID(61869, 63481) then	-- Overload
 		timerOverload:Start()
 		timerOverloadCooldown:Start()
@@ -214,7 +208,6 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		timerRuneofDeathCD:Cancel()
 		warnRuneofDeathIn10Sec:Cancel()
 		timerRuneofPower:Stop()
-		self:UnscheduleMethod("RuneOfPower")
 	end
 end
 
