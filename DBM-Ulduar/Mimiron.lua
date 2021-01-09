@@ -38,10 +38,10 @@ mod:AddBoolOption("ShockBlastWarningInP4", mod:IsMelee(), "announce")
 local warnLaserBarrage				= mod:NewSpecialWarningSpell(63293)
 
 local enrage 					= mod:NewBerserkTimer(900)
-local timerHardmode				= mod:NewTimer(605, "TimerHardmode", 64582)
-local timerP1toP2				= mod:NewTimer(40.5, "TimeToPhase2") 
-local timerP2toP3				= mod:NewTimer(20, "TimeToPhase3")
-local timerP3toP4				= mod:NewTimer(28, "TimeToPhase4")
+local timerHardmode				= mod:NewTimer(483, "TimerHardmode", 64582)
+local timerP1toP2				= mod:NewTimer(49, "TimeToPhase2") 
+local timerP2toP3				= mod:NewTimer(23, "TimeToPhase3")
+local timerP3toP4				= mod:NewTimer(24.5, "TimeToPhase4")
 
 local timerProximityMines		= mod:NewCDTimer(35, 63027)
 local timerShockBlast			= mod:NewCastTimer(63631)
@@ -280,7 +280,7 @@ function mod:NextPhase()
 			DBM.RangeCheck:Hide()
 		end
 		if hardmode then
-            timerNextFrostBomb:Start(45)
+            timerNextFrostBomb:Start(50)
         end
 
 	elseif self.vb.phase == 3 then
@@ -320,7 +320,7 @@ function mod:NextPhase()
 			DBM.BossHealth:AddBoss(33432, L.MobPhase1)
 		end
 		if hardmode then
-            timerNextFrostBomb:Start(30)
+            timerNextFrostBomb:Start(25.5)
         end
 	end
 end

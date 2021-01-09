@@ -4,6 +4,7 @@ local L		= mod:GetLocalizedStrings()
 mod:SetRevision(("$Revision: 3804 $"):sub(12, -3))
 mod:SetCreatureID(32871)
 
+mod:RegisterCombat("combat", 32871)
 mod:RegisterCombat("yell", L.YellPull)
 mod:RegisterKill("yell", L.YellKill)
 mod:SetWipeTime(20)
@@ -124,7 +125,7 @@ function mod:OnCombatEnd()
 	pull_happened = false
 
 	DBM.BossHealth:Hide()
-	howCollapsingHealth = false
+	showCollapsingHealth = false
 	
 end
 
