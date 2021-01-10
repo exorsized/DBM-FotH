@@ -39,15 +39,15 @@ local warnLaserBarrage				= mod:NewSpecialWarningSpell(63293)
 
 local enrage 					= mod:NewBerserkTimer(900)
 local timerHardmode				= mod:NewTimer(483, "TimerHardmode", 64582)
-local timerP1toP2				= mod:NewTimer(49, "TimeToPhase2") 
+local timerP1toP2				= mod:NewTimer(48, "TimeToPhase2") 
 local timerP2toP3				= mod:NewTimer(23, "TimeToPhase3")
 local timerP3toP4				= mod:NewTimer(24.5, "TimeToPhase4")
 
-local timerProximityMines		= mod:NewCDTimer(35, 63027)
+local timerProximityMines		= mod:NewCDTimer(30, 63027)
 local timerShockBlast			= mod:NewCastTimer(63631)
 local timerSpinUp				= mod:NewCastTimer(4, 63414)
 local timerLaserBarrageCast		= mod:NewCastTimer(10, 63274) --Laser Barrage
-local timerLaserBarrageCD		= mod:NewCDTimer(41, 63274) --Laser Barrage min. 55sec cd - 4sec spin up - 10sec cast
+local timerLaserBarrageCD		= mod:NewCDTimer(63, 63274) -- seems LaserBarrage is coming in every 63 sec on PTR
 local timerShockblastCD			= mod:NewCDTimer(35, 63631)
 local timerPlasmaBlastCD		= mod:NewCDTimer(30, 64529)
 local timerShell				= mod:NewBuffActiveTimer(6, 63666)
@@ -170,6 +170,7 @@ end
 
 function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(63631) then -- Shock Blast
+		--SendChatMessage("StartCast Shock Blast", "RAID")
 		if self.vb.phase == 1 and self.Options.ShockBlastWarningInP1 or self.vb.phase == 4 and self.Options.ShockBlastWarningInP4 then
 			warnShockBlast:Show()
 		end
@@ -178,14 +179,16 @@ function mod:SPELL_CAST_START(args)
 			PlaySoundFile("Sound\\Creature\\HoodWolf\\HoodWolfTransformPlayer01.wav")
 		end
 		-- start next timer, if p1 then 40s else 35s
-		if self.vb.phase == 1 then timerShockblastCD:Start(35)
+		if self.vb.phase == 1 then timerShockblastCD:Start(34)
 		else timerShockblastCD:Start() end
 	elseif args:IsSpellID(64529, 62997) then	-- Plasma Blast
+		--SendChatMessage("StartCast Plasma Blast", "RAID")
 		timerPlasmaBlastCD:Start()
 	elseif args:IsSpellID(64570) then	-- Flame Suppressant (phase 1)
-		--print("Flame suppressant casted p1")
+		--SendChatMessage("StartCast Flame Suppressant (phase 1)", "RAID")
 		timerFlameSuppressant:Start()
 	elseif args:IsSpellID(64623) then	-- Frost Bomb
+		--SendChatMessage("StartCast Frost Bomb", "RAID")
 		warnFrostBomb:Show()
 		timerBombExplosion:Start()
 		timerNextFrostBomb:Start()
@@ -194,6 +197,7 @@ end
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args:IsSpellID(63666, 65026) and args:IsDestTypePlayer() then	-- Napalm Shell
+		--SendChatMessage("Applied Napalm Shell", "RAID")
 		napalmShellTargets[#napalmShellTargets + 1] = args.destName
 		timerShell:Start()
 		if self.Options.SetIconOnNapalm then
@@ -203,6 +207,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		self:Unschedule(warnNapalmShellTargets)
 		self:Schedule(0.3, warnNapalmShellTargets)
 	elseif args:IsSpellID(64529, 62997) then	-- Plasma Blast
+		--SendChatMessage("Applied Plasma Blast", "RAID")
 		blastWarn:Show(args.destName)
 		if self.Options.SetIconOnPlasmaBlast then
 			self:SetIcon(args.destName, 8, 6)
@@ -212,22 +217,25 @@ end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	if args:IsSpellID(63027) then				-- Proximity Mines
+		--SendChatMessage("CastSuccess Proximity Mines", "RAID")
 		if self.vb.phase == 4 then timerProximityMines:Start(50)
 		else timerProximityMines:Start() end
 
 	elseif args:IsSpellID(63414) then			-- Spinning UP (before Laser Barrage)
+		--SendChatMessage("CastSuccess Spinning UP (before Laser Barrage)", "RAID")
 		is_spinningUp = true
 		timerSpinUp:Start()
 		timerLaserBarrageCast:Schedule(4)
-		timerLaserBarrageCD:Schedule(14)			-- 4 (cast spinup) + 10 sec (cast dark glare)
+		if self.vb.phase == 4 then timerLaserBarrageCD:Start(60) else timerLaserBarrageCD:Start() end 
 		DBM:Schedule(0.15, show_warning_for_spinup)	-- wait 0.15 and then announce it, otherwise it will sometimes fail
 		lastSpinUp = GetTime()
 	
 	elseif args:IsSpellID(65192) then	-- Flame Suppressant CD (phase 2)
+		--SendChatMessage("CastSuccess Flame Suppressant CD (phase 2)", "RAID")
 		timerFlameSuppressantCD:Start()
 
 	elseif args:IsSpellID(64570) then	-- Flame Suppressant Phase 1
-		--print("Flame suppressant casted p1")
+		--SendChatMessage("CastSuccess Flame Suppressant Phase 1", "RAID")
 		timerFlameSuppressant:Start()
 	end
 end
@@ -246,7 +254,7 @@ function mod:OnSync(event, args)
 		is_spinningUp = false
 		timerSpinUp:Cancel()
 		timerLaserBarrageCast:Cancel()
-		timerLaserBarrageCD:Cancel()
+		timerLaserBarrageCD:Stop()
 		warnLaserBarrage:Cancel()
 	elseif event == "Phase2" and self.vb.phase == 1 then -- alternate localized-dependent detection
 		self:NextPhase()
@@ -260,18 +268,20 @@ end
 function mod:NextPhase()
 	self.vb.phase = self.vb.phase + 1
 	if self.vb.phase == 1 then
+		--SendChatMessage("NextPhase 1", "RAID")
 		if self.Options.HealthFrame then
 			DBM.BossHealth:Clear()
 			DBM.BossHealth:AddBoss(33432, L.MobPhase1)
 		end
 
 	elseif self.vb.phase == 2 then
+		--SendChatMessage("NextPhase 2", "RAID")
 		timerShockblastCD:Stop()
 		timerProximityMines:Stop()
 		timerFlameSuppressant:Stop() -- stop p1 suppressant
 		timerPlasmaBlastCD:Stop()
 		timerP1toP2:Start()
-		timerLaserBarrageCD:Schedule(75) -- normal timer: 41s, 40.5s to activation, barrage ~34s after activation
+		timerLaserBarrageCD:Start(83)
 		if self.Options.HealthFrame then
 			DBM.BossHealth:Clear()
 			DBM.BossHealth:AddBoss(33651, L.MobPhase2)
@@ -280,15 +290,16 @@ function mod:NextPhase()
 			DBM.RangeCheck:Hide()
 		end
 		if hardmode then
-            timerNextFrostBomb:Start(50)
+            timerNextFrostBomb:Start(49)
         end
 
 	elseif self.vb.phase == 3 then
+		--SendChatMessage("NextPhase 3", "RAID")
 		if self.Options.AutoChangeLootToFFA and DBM:GetRaidRank() == 2 then
 			SetLootMethod("freeforall")
 		end
 		timerLaserBarrageCast:Cancel()
-		timerLaserBarrageCD:Cancel()
+		timerLaserBarrageCD:Stop()
 		timerNextFrostBomb:Cancel()
 		timerFlameSuppressantCD:Cancel()
 		timerP2toP3:Start()
@@ -300,6 +311,7 @@ function mod:NextPhase()
 		end
 
 	elseif self.vb.phase == 4 then
+		--SendChatMessage("NextPhase 4", "RAID")
 		if self.Options.AutoChangeLootToFFA and DBM:GetRaidRank() == 2 then
 			if masterlooterRaidID then
 				SetLootMethod(lootmethod, "raid"..masterlooterRaidID)
@@ -327,27 +339,27 @@ end
 
 function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if (msg == L.YellPhase2 or msg:find(L.YellPhase2)) then -- register Phase 2
-		--print("Detect Phase2 Start")
+		--SendChatMessage("Detect Phase2 Start", "RAID")
 		self:SendSync("Phase2")
 
 	elseif (msg == L.YellPhase3 or msg:find(L.YellPhase3) or msg:find(L.YellPhase3_2)) then -- register Phase 3
-		--print("Detect Phase3 Start")
+		--SendChatMessage("Detect Phase3 Start", "RAID")
 		self:SendSync("Phase3")
 
 	elseif (msg == L.YellPhase4 or msg:find(L.YellPhase4)) then -- register Phase 4
-		--print("Detect Phase4 Start")
+		--SendChatMessage("Detect Phase4 Start", "RAID")
 		self:SendSync("Phase4")
 	
 	elseif (msg == L.YellHardPull or msg:find(L.YellHardPull)) then -- register HARDMODE
-		--print("Detect Hardmode Pull")
+		--SendChatMessage("Detect HardMode pull", "RAID")
 		enrage:Stop()
 		hardmode = true
 		timerHardmode:Start()
 		timerShockblastCD:Start(35)
-		timerPlasmaBlastCD:Start(29.5)
-		timerProximityMines:Start(11)
-		timerFlameSuppressant:Start(65)	-- from vod, if blast first its delayed by ~4-5sec
-		timerShockblastCD:Start(37)	-- from vods
+		timerPlasmaBlastCD:Start(27)
+		timerProximityMines:Start(17)
+		timerFlameSuppressant:Start(72)	-- from vod, if blast first its delayed by ~4-5sec
+		timerShockblastCD:Start(45)	-- from vods
 
 	elseif (msg == L.YellKilled or msg:find(L.YellKilled)) then -- register kill
 		enrage:Stop()
@@ -364,7 +376,7 @@ end
 
 function mod:SPELL_SUMMON(args)
 	if args:IsSpellID(63811, 63767, 63801) then
-		--print("SPELL_SUMMON_BOMB_BOT")
+		--SendChatMessage("Spell Summon bomb bot", "RAID")
 		timerBombBotSpawn:Start()
 		warnBombSpawn:Show()
 	end
