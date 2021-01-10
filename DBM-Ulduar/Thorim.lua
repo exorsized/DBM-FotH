@@ -30,7 +30,7 @@ mod:AddBoolOption("AnnounceFails", false, "announce")
 
 local enrageTimer				= mod:NewBerserkTimer(369)
 local timerStormhammerCD		= mod:NewCDTimer(15, 62042)
-local timerLightningCharge	 	= mod:NewCDTimer(16, 62466)
+local timerLightningCharge	 	= mod:NewCastTimer(16, 62466)
 local timerUnbalancingStrike	= mod:NewCastTimer(26, 62130)
 local timerHardmodeThorim		= mod:NewTimer(150, "TimerHardmodeThorim", 62042)
 local timerFrostNovaCD			= mod:NewCDTimer(20, 62605)
@@ -93,6 +93,9 @@ function mod:SPELL_CAST_SUCCESS(args)
 		timerUnbalancingStrike:Start()
 	elseif args:IsSpellID(62604) then	-- Frostbolt Volley by Sif
 		timerFBVolley:Start()
+	elseif args:IsSpellID(62466) then -- Lightning Charge
+		timerLightningCharge:Start()
+		warnLightningCharge:Show()
 	end
 end
 

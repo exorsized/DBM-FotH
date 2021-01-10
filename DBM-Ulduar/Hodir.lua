@@ -27,14 +27,16 @@ mod:AddBoolOption("YellOnStormCloud", true, "announce")
 local enrageTimer			= mod:NewBerserkTimer(475)
 local timerFlashFreeze		= mod:NewCastTimer(9, 61968)
 local timerFrozenBlows		= mod:NewBuffActiveTimer(20, 63512)
-local timerFlashFrCD		= mod:NewCDTimer(60, 61968) --first 47s, 2nd 50s
+local timerFlashFrCD		= mod:NewCDTimer(50, 61968) --first 47s, 2nd 50s
 local timerAchieve			= mod:NewAchievementTimer(179, 3182, "TimerSpeedKill")
+local timerAchieve2m		= mod:NewAchievementTimer(119, 3182, "TimerSpeedKill2m")
 
 mod:AddBoolOption("SetIconOnStormCloud")
 
 function mod:OnCombatStart(delay)
 	enrageTimer:Start(-delay)
 	timerAchieve:Start()
+	timerAchieve2m:Start()
 	timerFlashFrCD:Start(-delay)
 end
 

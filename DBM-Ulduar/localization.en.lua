@@ -293,6 +293,7 @@ L:SetWarningLocalization{
 }
 
 L:SetTimerLocalization{
+	TimerSpeedKill2m = "Speed Kill (2 min)"
 }
 
 L:SetOptionLocalization{
