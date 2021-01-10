@@ -76,13 +76,15 @@ function mod:SPELL_AURA_APPLIED(args)
 	if args:IsSpellID(62042) then 					-- Storm Hammer
 		warnStormhammer:Show(args.destName)
 		timerStormhammerCD:Start()
-	elseif args:IsSpellID(62507) then				-- Touch of Dominion
+	elseif args:IsSpellID(62507) then				-- Touch of Dominion (62507)
 		timerHardmodeThorim:Start()
 	elseif args:IsSpellID(62130) then				-- Unbalancing Strike
 		warnUnbalancingStrike:Show(args.destName)
 	elseif args:IsSpellID(62526, 62527) then		-- Runic Detonation
 		self:SetIcon(args.destName, 8, 5)
 		warningBomb:Show(args.destName)
+	elseif args:IsSpellID(62565) then -- touch of dominion (62565) applied, no more hardmode possible
+        specWarnHMTimerRanOut:Show()
 	end
 end
 
@@ -138,10 +140,4 @@ function mod:SPELL_CAST_START(args)
 	elseif args:IsSpellID(64390) then --Chain Lightning by Thorim
 		--timerChainLightning:Start()
 	end
-end
-
-function mod:SPELL_AURA_REMOVED(args)
-	if args.spellId == 62507 then -- touch of dominion removed, no more hardmode possible
-        specWarnHMTimerRanOut:Show()
-    end
 end
