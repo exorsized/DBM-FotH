@@ -109,14 +109,19 @@ local starNumToDie = 1
 local starToDieTimers = {}
 local starToDieWarnings = {}
 
+local showCollapsingLowHP = false
+
 mod:RemoveOption("HealthFrame")
 mod:AddBoolOption("StarHealthFrame", true)
-mod:AddBoolOption("WarnStarDieIn5Sec", true)
+mod:AddBoolOption("WarnStarDieIn5Sec", false)
+mod:AddBoolOption("WarningCollapsingHP", false)
 
 function mod:OnCombatStart(delay)
 	warned_preP2 = false
 	warned_star = false
 	pull_happened = false
+
+	if self.Options.WarningCollapsingHP then showCollapsingLowHP = true else showCollapsingHealth = false end
 end
 
 function mod:OnCombatEnd()
@@ -175,7 +180,7 @@ do	-- add the additional Rune Power Bar
 			last1 = 0
 		end
 
-		if last1 < 12 and not star1warned then
+		if last1 < 18 and not star1warned then
 			local playerName = "-"
 			if collapsingPlayerCD[numOfWarnedStars+1] ~= nil then
 				playerName = collapsingPlayerCD[numOfWarnedStars+1]
@@ -184,7 +189,7 @@ do	-- add the additional Rune Power Bar
 			star1warned = true
 			numOfWarnedStars = numOfWarnedStars + 1
 
-			specWarnCollapsingHP:Show(numOfWarnedStars, playerName)
+			if showCollapsingLowHP then specWarnCollapsingHP:Show(numOfWarnedStars, playerName) end
 		end
 
 		return last1
@@ -215,7 +220,7 @@ do	-- add the additional Rune Power Bar
 			last2 = 0
 		end
 
-		if last2 < 12 and not star2warned then
+		if last2 < 18 and not star2warned then
 			local playerName = "-"
 			if collapsingPlayerCD[numOfWarnedStars+1] ~= nil then
 				playerName = collapsingPlayerCD[numOfWarnedStars+1]
@@ -224,7 +229,7 @@ do	-- add the additional Rune Power Bar
 			star2warned = true
 			numOfWarnedStars = numOfWarnedStars + 1
 
-			specWarnCollapsingHP:Show(numOfWarnedStars, playerName)
+			if showCollapsingLowHP then specWarnCollapsingHP:Show(numOfWarnedStars, playerName) end
 		end
 
 		return last2
@@ -255,7 +260,7 @@ do	-- add the additional Rune Power Bar
 			last3 = 0
 		end
 
-		if last3 < 12 and not star3warned then
+		if last3 < 18 and not star3warned then
 			local playerName = "-"
 			if collapsingPlayerCD[numOfWarnedStars+1] ~= nil then
 				playerName = collapsingPlayerCD[numOfWarnedStars+1]
@@ -264,7 +269,7 @@ do	-- add the additional Rune Power Bar
 			star3warned = true
 			numOfWarnedStars = numOfWarnedStars + 1
 
-			specWarnCollapsingHP:Show(numOfWarnedStars, playerName)
+			if showCollapsingLowHP then specWarnCollapsingHP:Show(numOfWarnedStars, playerName) end
 		end
 
 		return last3
@@ -295,7 +300,7 @@ do	-- add the additional Rune Power Bar
 			last4 = 0
 		end
 
-		if last4 < 12 and not star4warned then
+		if last4 < 18 and not star4warned then
 			local playerName = "-"
 			if collapsingPlayerCD[numOfWarnedStars+1] ~= nil then
 				playerName = collapsingPlayerCD[numOfWarnedStars+1]
@@ -304,7 +309,7 @@ do	-- add the additional Rune Power Bar
 			star4warned = true
 			numOfWarnedStars = numOfWarnedStars + 1
 
-			specWarnCollapsingHP:Show(numOfWarnedStars, playerName)
+			if showCollapsingLowHP then specWarnCollapsingHP:Show(numOfWarnedStars, playerName) end
 		end
 
 		return last4
@@ -421,7 +426,7 @@ end
 function mod:SPELL_CAST_SUCCESS(args)
 	if args:IsSpellID(65108, 64122) then 	-- Black Hole Explosion -- doesnt work on warmeme, seems fixed?
 		announceBlackHole:Show()
-		specWarnBlackHole:Show(bh_explosion)
+		--specWarnBlackHole:Show(bh_explosion)
 		bh_explosion = bh_explosion + 1
 		warned_star = false
 	elseif args:IsSpellID(64598, 62301) then	-- Cosmic Smash

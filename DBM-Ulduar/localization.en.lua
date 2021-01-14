@@ -181,7 +181,7 @@ L:SetWarningLocalization{
 	warnStarLow				= "Collapsing Star is low",
 	WarningStarDieIn5Sec 	= "Collapsing Star #%d should die in 5 sec.",
 	WarningBlackHole	 	= "Black Hole Explosion #%d",
-	WarningCollapsingHP		= "Collapsing Star #%d is below 12%% - CD: %s"
+	WarningCollapsingHP		= "Collapsing Star #%d is below 18%% - CD: %s"
 }
 
 L:SetOptionLocalization{

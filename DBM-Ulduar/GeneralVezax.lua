@@ -44,6 +44,8 @@ local hardModeAvailable 		= true
 
 local saroniteVaporsDamage		= {}
 
+local crashTarget 				= ""
+
 mod:AddBoolOption("YellOnLifeLeech", true, "announce")
 mod:AddBoolOption("YellOnShadowCrash", true, "announce")
 mod:AddBoolOption("SetIconOnShadowCrash", true)
@@ -59,6 +61,8 @@ function mod:OnCombatStart(delay)
 	timerSaroniteVapors:Start(-delay)
 	timerNextSurgeofDarkness:Start(-delay)
 	timerMarkOfTheFacelessCD:Start(20)
+
+	crashTarget = ""
 
 	hardModeAvailable = true
 
@@ -93,7 +97,7 @@ function mod:SPELL_AURA_REMOVED(args)
 end
 
 function mod:ShadowCrashTarget()
-	local target = self:GetBossTarget(33271)
+	local target = crashTarget
 	if not target then return end
 	if mod:LatencyCheck() then--Only send sync if you have low latency.
 		self:SendSync("CrashOn", target)
@@ -101,7 +105,7 @@ function mod:ShadowCrashTarget()
 end
 
 function mod:OldShadowCrashTarget()
-	local targetname = self:GetBossTarget()
+	local targetname = crashTarget
 	if not targetname then return end
 	if self.Options.SetIconOnShadowCrash then
 		self:SetIcon(targetname, 8, 10)
@@ -134,6 +138,7 @@ end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	if args:IsSpellID(62660) then		-- Shadow Crash
+		crashTarget = args.destName
 		if self.Options.BypassLatencyCheck then
 			self:ScheduleMethod(0.1, "OldShadowCrashTarget")
 		else

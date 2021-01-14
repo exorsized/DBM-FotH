@@ -53,7 +53,7 @@ local timerPlasmaBlastCD		= mod:NewCDTimer(30, 64529)
 local timerShell				= mod:NewBuffActiveTimer(6, 63666)
 local timerFlameSuppressant		= mod:NewCastTimer(40, 64570)
 local timerFlameSuppressantCD	= mod:NewCDTimer(10, 65192)
-local timerNextFlames			= mod:NewNextTimer(30, 64566)
+local timerNextFlames			= mod:NewNextTimer(27.6, 64566)
 local timerNextFrostBomb        = mod:NewNextTimer(45, 64623)
 local timerBombExplosion		= mod:NewCastTimer(15, 65333)
 local timerBombBotSpawn			= mod:NewCDTimer(15, 63811)
@@ -117,12 +117,13 @@ end
 
 function mod:Flames()	-- Flames 
 	timerNextFlames:Start()
-	self:ScheduleMethod(30, "Flames")
-	warnFlamesSoon:Schedule(20)
+	isFlamesTimerStarted = true
+	self:ScheduleMethod(27.6, "Flames")
+	warnFlamesSoon:Schedule(17.6)
 	if self.Options.WarnFlamesIn5Sec then
-		warnFlamesIn5Sec:Schedule(25)
+		warnFlamesIn5Sec:Schedule(22.6)
 	end
-	mod:CountdownFinalSeconds(self.Options.SoundWarnCountingFlames, 30)
+	mod:CountdownFinalSeconds(self.Options.SoundWarnCountingFlames, 27.6)
 end
 
 function mod:SPELL_DAMAGE(args)
@@ -360,6 +361,13 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		timerProximityMines:Start(17)
 		timerFlameSuppressant:Start(72)	-- from vod, if blast first its delayed by ~4-5sec
 		timerShockblastCD:Start(45)	-- from vods
+		timerNextFlames:Start(6.5)
+		isFlamesTimerStarted = true
+		self:ScheduleMethod(6.5, "Flames")
+		if self.Options.WarnFlamesIn5Sec then
+			warnFlamesIn5Sec:Schedule(1.5)
+		end
+		mod:CountdownFinalSeconds(self.Options.SoundWarnCountingFlames, 6.5)
 
 	elseif (msg == L.YellKilled or msg:find(L.YellKilled)) then -- register kill
 		enrage:Stop()
@@ -385,12 +393,12 @@ end
 function mod:SPELL_DAMAGE(args)
 	if args:IsSpellID(64566) and isFlamesTimerStarted == false then -- Flames
 		isFlamesTimerStarted = true
-		timerNextFlames:Start(29)
-		self:ScheduleMethod(29, "Flames")
-		warnFlamesSoon:Schedule(19)
+		timerNextFlames:Start(26.6)
+		self:ScheduleMethod(26.6, "Flames")
+		warnFlamesSoon:Schedule(16.6)
 		if self.Options.WarnFlamesIn5Sec then
-			warnFlamesIn5Sec:Schedule(24) 
+			warnFlamesIn5Sec:Schedule(21.6) 
 		end
-		mod:CountdownFinalSeconds(self.Options.SoundWarnCountingFlames, 29)
+		mod:CountdownFinalSeconds(self.Options.SoundWarnCountingFlames, 26.6)
 	end
 end

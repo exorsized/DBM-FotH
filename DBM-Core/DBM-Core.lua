@@ -732,6 +732,14 @@ SlashCmdList["DEADLYBOSSMODS"] = function(msg)
 		   token_num = token_num + 1
 		end
 		collapsingPlayerCD[star_num] = player_name
+
+		if token_num == 2 then
+			for var=1,12 do
+	   			if collapsingPlayerCD[var] then print("Collapsing "..var.." - "..collapsingPlayerCD[var]) end
+			end
+		else
+			print("Player CD is assgined for Collapsing "..star_num.." - "..collapsingPlayerCD[star_num])
+		end
 	elseif cmd:sub(1, 5) == "timer" then
 		local time, text = msg:match("^%w+ ([%d:]+) (.+)$")
 		if not (time and text) then

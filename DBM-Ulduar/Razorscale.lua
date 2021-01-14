@@ -104,7 +104,7 @@ function mod:SPELL_CAST_START(args)
 		timerDeepBreathCast:Start()
 		timerDeepBreathCooldown:Start()
 	elseif args:IsSpellID(63236) then
-		local target = self:GetBossTarget(self.creatureId)
+		local target = args.destName
 		if target then
 			self:CastFlame(target)
 		else
