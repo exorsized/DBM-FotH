@@ -73,6 +73,7 @@ local star4warned = false
 local numOfWarnedStars = 0
 
 local starMaxHealth = 176400
+local starMaxHealth10m = 88200
 local star_damage_1 = 0
 local star_damage_2 = 0
 local star_damage_3 = 0
@@ -121,7 +122,7 @@ function mod:OnCombatStart(delay)
 	warned_star = false
 	pull_happened = false
 
-	if self.Options.WarningCollapsingHP then showCollapsingLowHP = true else showCollapsingHealth = false end
+	if self.Options.WarningCollapsingHP then showCollapsingLowHP = true else showCollapsingLowHP = false end
 end
 
 function mod:OnCombatEnd()
@@ -346,10 +347,12 @@ function mod:startTimers()
 	 lastDiedStarGUID = 0
 	 lastDiedStarTime = 0
 
-	 last1real = 176400
-	 last2real = 176400
-	 last3real = 176400
-	 last4real = 176400
+	 if not mod:IsDifficulty("heroic25") then starMaxHealth = starMaxHealth10m else starMaxHealth = 176400
+
+	 last1real = starMaxHealth
+	 last2real = starMaxHealth
+	 last3real = starMaxHealth
+	 last4real = starMaxHealth
 
 	 prevStarSpwawnIteration = 0
 	 lastStarSpawnIteration = 0
@@ -610,7 +613,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 			lastStar1Time = GetTime() + 1
 			star_guids["star1"] = nil
 			star_damage_1 = 0
-			last1real = 176400
+			last1real = starMaxHealth
 			next_star_to_die = table.remove(starToDieTimes)
 			if next_star_to_die then
 				starToDieTimers[starNumToDie] = mod:NewTimer(next_star_to_die - abs(GetTime() - pullTime), "Collapsing Star #"..starNumToDie.." Death")
@@ -633,7 +636,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 			lastStar2Time = GetTime() + 1
 			star_guids["star2"] = nil
 			star_damage_2 = 0
-			last2real = 176400
+			last2real = starMaxHealth
 			next_star_to_die = table.remove(starToDieTimes)
 			if next_star_to_die then
 				starToDieTimers[starNumToDie] = mod:NewTimer(next_star_to_die - abs(GetTime() - pullTime), "Collapsing Star #"..starNumToDie.." Death")
@@ -656,7 +659,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 			lastStar3Time = GetTime() + 1
 			star_guids["star3"] = nil
 			star_damage_3 = 0
-			last3real = 176400
+			last3real = starMaxHealth
 			next_star_to_die = table.remove(starToDieTimes)
 			if next_star_to_die then
 				starToDieTimers[starNumToDie] = mod:NewTimer(next_star_to_die - abs(GetTime() - pullTime), "Collapsing Star #"..starNumToDie.." Death")
@@ -679,7 +682,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 			lastStar4Time = GetTime() + 1
 			star_guids["star4"] = nil
 			star_damage_4 = 0
-			last4real = 176400
+			last4real = starMaxHealth
 			next_star_to_die = table.remove(starToDieTimes)
 			if next_star_to_die then
 				starToDieTimers[starNumToDie] = mod:NewTimer(next_star_to_die - abs(GetTime() - pullTime), "Collapsing Star #"..starNumToDie.." Death")
