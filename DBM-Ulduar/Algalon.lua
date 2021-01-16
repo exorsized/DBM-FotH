@@ -347,7 +347,7 @@ function mod:startTimers()
 	 lastDiedStarGUID = 0
 	 lastDiedStarTime = 0
 
-	 if not mod:IsDifficulty("heroic25") then starMaxHealth = starMaxHealth10m else starMaxHealth = 176400
+	 if not mod:IsDifficulty("heroic25") then starMaxHealth = starMaxHealth10m else starMaxHealth = 176400 end
 
 	 last1real = starMaxHealth
 	 last2real = starMaxHealth
