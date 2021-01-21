@@ -117,6 +117,7 @@ mod:RemoveOption("HealthFrame")
 mod:AddBoolOption("StarHealthFrame", true)
 mod:AddBoolOption("WarnStarDieIn5Sec", false)
 mod:AddBoolOption("WarningCollapsingHP", false)
+mod:AddBoolOption("showCollapsingTimers", true)
 
 function mod:OnCombatStart(delay)
 	warned_preP2 = false
@@ -625,7 +626,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 					specwarnStarDieIn5Sec:Schedule((next_star_to_die - abs(GetTime() - pullTime)) - 5 , starNumToDie)
 				end
 				mod:CountdownFinalSeconds(self.Options.WarnStarDieIn5Sec, next_star_to_die - abs(GetTime() - pullTime))
-				starDeathTimer:Start()
+				if self.Options.showCollapsingTimers then starDeathTimer:Start() end
 			end
 			starNumToDie = starNumToDie + 1
 			isNewStarSpawned = true
@@ -648,7 +649,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 					specwarnStarDieIn5Sec:Schedule((next_star_to_die - abs(GetTime() - pullTime)) - 5 , starNumToDie)
 				end
 				mod:CountdownFinalSeconds(self.Options.WarnStarDieIn5Sec, next_star_to_die - abs(GetTime() - pullTime))
-				starDeathTimer:Start()
+				if self.Options.showCollapsingTimers then starDeathTimer:Start() end
 			end
 			starNumToDie = starNumToDie + 1
 			isNewStarSpawned = true
@@ -671,7 +672,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 					specwarnStarDieIn5Sec:Schedule((next_star_to_die - abs(GetTime() - pullTime)) - 5 , starNumToDie)
 				end
 				mod:CountdownFinalSeconds(self.Options.WarnStarDieIn5Sec, next_star_to_die - abs(GetTime() - pullTime))
-				starDeathTimer:Start()
+				if self.Options.showCollapsingTimers then starDeathTimer:Start() end
 			end
 			starNumToDie = starNumToDie + 1
 			isNewStarSpawned = true
@@ -694,7 +695,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 					specwarnStarDieIn5Sec:Schedule((next_star_to_die - abs(GetTime() - pullTime)) - 5 , starNumToDie)
 				end
 				mod:CountdownFinalSeconds(self.Options.WarnStarDieIn5Sec, next_star_to_die - abs(GetTime() - pullTime))
-				starDeathTimer:Start()
+				if self.Options.showCollapsingTimers then starDeathTimer:Start() end
 			end
 			starNumToDie = starNumToDie + 1
 			isNewStarSpawned = true

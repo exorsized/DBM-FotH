@@ -187,6 +187,7 @@ L:SetWarningLocalization{
 L:SetOptionLocalization{
 	WarningPhasePunch		= "Announce Phase Punch targets",
 	NextCollapsingStar		= "Show timer for next Collapsing Star",
+	AlgalonDisappears		= "Show timer for Algalon disappears",
 	WarningCosmicSmash 		= "Show warning for Cosmic Smash",
 	NextCosmicSmash			= "Show timer for next Cosmic Smash",
 	TimerCombatStart		= "Show timer for start of combat",
@@ -195,6 +196,7 @@ L:SetOptionLocalization{
 	WarningStarDieIn5Sec 	= "Show special warning for Collapsing Star desired death time.",
 	WarningBlackHole	 	= "Show special warning for Black Hole Explosion.",
 	WarningCollapsingHP		= "Show special warning for Collapsing low HP.",
+	showCollapsingTimers	= "Show timers for Collapsing Star desired death time.",
 	WarnStarDieIn5Sec 		= "Show special warning for Collapsing Star desired death time.",
 	StarHealthFrame			= "Show Collapsing Star and boss health bar"
 }

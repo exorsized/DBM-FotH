@@ -5,6 +5,8 @@ mod:SetRevision(("$Revision: 4133 $"):sub(12, -3))
 
 mod:SetCreatureID(33515)
 mod:RegisterCombat("combat")
+mod:RegisterCombat("combat", 33515)
+mod:RegisterCombat("combat", 34175)
 
 mod:RegisterEvents(
 	"SPELL_CAST_START",
@@ -34,7 +36,7 @@ local specWarnBlast		= mod:NewSpecialWarning("SpecWarnBlast", canInterrupt)
 local specWarnVoid 		= mod:NewSpecialWarningMove(64675)
 
 local enrageTimer		= mod:NewBerserkTimer(600)
-local timerDefender 	= mod:NewTimer(8, "timerDefender")
+local timerDefender 	= mod:NewTimer(35, "timerDefender")
 local timerFear			= mod:NewCastTimer(64386)
 local timerFearCD 		= mod:NewCDTimer(30, 64386)
 local timerNextSwarm 	= mod:NewNextTimer(36, 64396)
