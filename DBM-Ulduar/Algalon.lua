@@ -1,14 +1,14 @@
 local mod	= DBM:NewMod("Algalon", "DBM-Ulduar")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 17100 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 5050 $"):sub(12, -3))
 mod:SetCreatureID(32871)
 
 mod:RegisterCombat("combat", 32871)
 mod:RegisterCombat("yell", L.YellPull)
 mod:RegisterKill("yell", L.YellKill)
 mod:SetWipeTime(20)
-mod:SetMinSyncRevision(17100)
+mod:SetMinSyncRevision(5050)
 
 mod:EnableModel()
 

@@ -1,10 +1,10 @@
 local mod	= DBM:NewMod("GeneralVezax", "DBM-Ulduar")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 17100 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 5050 $"):sub(12, -3))
 mod:SetCreatureID(33271)
 mod:SetUsedIcons(7, 8)
-mod:SetMinSyncRevision(17100)
+mod:SetMinSyncRevision(5050)
 
 mod:RegisterCombat("combat")
 
