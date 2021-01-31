@@ -524,7 +524,7 @@ L:SetWarningLocalization{
 
 L:SetTimerLocalization{
 	NextPortal	= "Brain Portal",
-	TimeNextImmGuard = "Next Immortal Guardian spawn"
+	TimerNextImmGuard = "Next Immortal Guardian spawn"
 }
 
 L:SetOptionLocalization{
