@@ -1,9 +1,8 @@
 local mod	= DBM:NewMod("YoggSaron", "DBM-Ulduar")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 5050 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 4338 $"):sub(12, -3))
 mod:SetCreatureID(33288)
-mod:SetMinSyncRevision(5050)
 
 mod:RegisterCombat("yell", L.YellPull)
 
@@ -31,7 +30,7 @@ local warnP2 						= mod:NewPhaseAnnounce(2, 2)
 local warnP3 						= mod:NewPhaseAnnounce(3, 2)
 local warnSanity 					= mod:NewAnnounce("WarningSanity", 3, 63050)
 local warnBrainLink 				= mod:NewTargetAnnounce(63802, 3)
-local warnEmpowerSoon				= mod:NewSoonAnnounce(64486, 4)
+local warnEmpowerSoon				= mod:NewSpecialWarning("WarnEmpowerSoon")
 
 local specWarnGuardianLow 			= mod:NewSpecialWarning("SpecWarnGuardianLow", false)
 local specWarnBrainLink 			= mod:NewSpecialWarningYou(63802)
@@ -42,6 +41,7 @@ local specWarnDeafeningRoar			= mod:NewSpecialWarningSpell(64189)
 local specWarnFervor				= mod:NewSpecialWarningYou(63138)
 local specWarnFervorCast			= mod:NewSpecialWarning("SpecWarnFervorCast", mod:IsMelee())
 local specWarnMaladyNear			= mod:NewSpecialWarning("SpecWarnMaladyNear", true)
+local specWarnImmGuard				= mod:NewSpecialWarning("WarnImmGuardSpawn")
 
 mod:AddBoolOption("WarningSqueeze", true, "announce")
 
@@ -56,20 +56,24 @@ local timerMadness 					= mod:NewCastTimer(60, 64059)
 local timerCastDeafeningRoar		= mod:NewCastTimer(2.3, 64189)
 local timerDeafeningRoarCD			= mod:NewCDTimer(58, 64189)
 local timerAchieve					= mod:NewAchievementTimer(420, 3012, "TimerSpeedKill")
+local timerNextImmGuard				= mod:NewTimer(10, "TimeNextImmGuard") 
 
 mod:AddBoolOption("ShowSaraHealth")
 mod:AddBoolOption("SetIconOnFearTarget")
 mod:AddBoolOption("SetIconOnFervorTarget")
 mod:AddBoolOption("SetIconOnBrainLinkTarget")
 mod:AddBoolOption("MaladyArrow")
+mod:AddBoolOption("WarnImmGuardSpawn", false)
 
 local targetWarningsShown			= {}
 local brainLinkTargets = {}
 local brainLinkIcon = 7
 local Guardians = 0
+local numOfImmGuard = 0
 
 function mod:OnCombatStart(delay)
 	Guardians = 0
+	numOfImmGuard = 0
 	self.vb.phase = 1
 	enrageTimer:Start()
 	timerAchieve:Start()
@@ -81,6 +85,19 @@ function mod:OnCombatStart(delay)
 	end
 	table.wipe(targetWarningsShown)
 	table.wipe(brainLinkTargets)
+end
+
+function mod:ImmGuardSpawn()	-- ImmGuardSpawn 
+
+	timerNextImmGuard:Start()
+
+	numOfImmGuard = numOfImmGuard + 1
+	self:ScheduleMethod(10, "ImmGuardSpawn")
+
+	if self.Options.WarnImmGuardSpawn then
+		SendChatMessage("Immortal Guardian #"..numOfImmGuard.." spawned!", "RAID")
+	end
+
 end
 
 function mod:FervorTarget()
@@ -189,7 +206,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif args:IsSpellID(64465) then
 		timerEmpower:Start()
 		timerEmpowerDuration:Start()
-		warnEmpowerSoon:Schedule(40)
+		warnEmpowerSoon:Schedule(42)
 	end
 end
 
@@ -224,15 +241,18 @@ end
 function mod:OnSync(msg)
 	if msg == "Phase3" then
 		warnP3:Show()
+		self:ScheduleMethod(0.1, "ImmGuardSpawn")
 		self.vb.phase = 3
 		brainportal:Cancel()
 		timerEmpower:Start()
 		timerMadness:Cancel()
 		specWarnBrainPortalSoon:Cancel() 
 		specWarnMadnessOutNow:Cancel()	
-        warnEmpowerSoon:Schedule(40)	
-		timerDeafeningRoarCD:Start(22)
-		warnDeafeningRoarSoon:Schedule(17)
+        warnEmpowerSoon:Schedule(42)	
+		if mod:IsDifficulty("heroic25") then 
+			timerDeafeningRoarCD:Start(22)
+			warnDeafeningRoarSoon:Schedule(17)
+		end
 	end
 end
 

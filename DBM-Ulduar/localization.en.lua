@@ -517,15 +517,19 @@ L:SetWarningLocalization{
 	SpecWarnFervor					= "Sara's Fervor on you",
 	SpecWarnFervorCast				= "Sara's Fervor is being cast on you",
 	SpecWarnMaladyNear				= "Malady of the Mind on %s near you",
-	specWarnBrainPortalSoon			= "Brain Portal in 5sec"
+	specWarnBrainPortalSoon			= "Brain Portal in 5sec",
+	WarnImmGuardSpawn				= "Guardian Taunt: TANK %s",
+	WarnEmpowerSoon					= "Empower Soon !!! SPLIT NOW !!!"
 }
 
 L:SetTimerLocalization{
-	NextPortal	= "Brain Portal"
+	NextPortal	= "Brain Portal",
+	TimeNextImmGuard = "Next Immortal Guardian spawn"
 }
 
 L:SetOptionLocalization{
 	WarningGuardianSpawned			= "Show warning for Guardian spawns",
+	WarnImmGuardSpawn				= "Show warning (raid chat) for Immortal Guardian spwans",
 	WarningCrusherTentacleSpawned	= "Show warning for Crusher Tentacle spawns",
 	WarningSanity					= "Show warning when $spell:63050 is low",
 	SpecWarnSanity					= "Show special warning when $spell:63050 is very low",

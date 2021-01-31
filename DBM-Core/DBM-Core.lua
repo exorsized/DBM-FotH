@@ -60,7 +60,7 @@ f:SetScript("OnUpdate", fCLFix)
 DBM = {
 	Revision = ("$Revision: 5050 $"):sub(12, -3),
 	Version = "5.05",
-	DisplayVersion = "5.05 DBM-FotH v1.8-beta by Exorsized", -- the string that is shown as version
+	DisplayVersion = "5.05 DBM-FotH v2.1 by Exorsized", -- the string that is shown as version
 	ReleaseRevision = 5050 -- the revision of the latest stable version that is available (for /dbm ver2)
 }
 
@@ -974,7 +974,7 @@ do
 			ignore = link:match(":([^:]+)$")
 			StaticPopup_Show("DBM_CONFIRM_IGNORE", ignore)
 		elseif linkType == "DBM" and arg1 == "update" then
-			DBM:ShowUpdateReminder(arg2, arg3) -- displayVersion, revision
+			--DBM:ShowUpdateReminder(arg2, arg3) -- displayVersion, revision
 		end
 	end)
 end
@@ -1540,11 +1540,11 @@ do
 						if found then
 							showedUpdateReminder = true
 							if not DBM.Options.BlockVersionUpdatePopup then
-								DBM:ShowUpdateReminder(displayVersion, revision)
+								--DBM:ShowUpdateReminder(displayVersion, revision)
 							else
-								DBM:AddMsg(DBM_CORE_UPDATEREMINDER_HEADER:match("([^\n]*)"))
-								DBM:AddMsg(DBM_CORE_UPDATEREMINDER_HEADER:match("\n(.*)"):format(displayVersion, revision))
-								DBM:AddMsg(("|HDBM:update:%s:%s|h|cff3588ff[http://deadlybossmods.com]"):format(displayVersion, revision))
+								--DBM:AddMsg(DBM_CORE_UPDATEREMINDER_HEADER:match("([^\n]*)"))
+								--DBM:AddMsg(DBM_CORE_UPDATEREMINDER_HEADER:match("\n(.*)"):format(displayVersion, revision))
+								--DBM:AddMsg(("|HDBM:update:%s:%s|h|cff3588ff[http://deadlybossmods.com]"):format(displayVersion, revision))
 							end
 						end
 					end
