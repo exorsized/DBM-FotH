@@ -541,6 +541,7 @@ L:SetOptionLocalization{
 	specWarnBrainPortalSoon			= "Show special warning for next Brain Portal",
 	WarningSqueeze					= "Yell on Squeeze",
 	NextPortal						= "Show timer for next Brain Portal",
+	TimerNextImmGuard				= "Show timer for next Immortal Guardian spawn",
 	SetIconOnFervorTarget			= "Set icons on $spell:63138 targets",
 	ShowSaraHealth					= "Show health frame for Sara in Phase 1 (must be targeted or focused by at least one raid member)",
 	SpecWarnMaladyNear				= "Show special warning for $spell:63881 near you",

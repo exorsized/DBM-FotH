@@ -56,7 +56,7 @@ local timerMadness 					= mod:NewCastTimer(60, 64059)
 local timerCastDeafeningRoar		= mod:NewCastTimer(2.3, 64189)
 local timerDeafeningRoarCD			= mod:NewCDTimer(58, 64189)
 local timerAchieve					= mod:NewAchievementTimer(420, 3012, "TimerSpeedKill")
-local timerNextImmGuard				= mod:NewTimer(10, "TimeNextImmGuard") 
+local timerNextImmGuard				= mod:NewTimer(10, "TimerNextImmGuard") 
 
 mod:AddBoolOption("ShowSaraHealth")
 mod:AddBoolOption("SetIconOnFearTarget")
