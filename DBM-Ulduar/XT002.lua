@@ -40,7 +40,7 @@ function mod:OnCombatStart(delay)
 	self.vb.phase = 1
 	enrageTimer:Start(-delay)
 	timerAchieve:Start()
-	timerTympanicTantrumCD:Start(60-delay)
+	timerTympanicTantrumCD:Start(30-delay)
 end
 
 function mod:SPELL_CAST_START(args)
