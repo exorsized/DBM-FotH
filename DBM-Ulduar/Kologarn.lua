@@ -4,7 +4,6 @@ local L		= mod:GetLocalizedStrings()
 mod:SetRevision(("$Revision: 5050 $"):sub(12, -3))
 mod:SetCreatureID(32930)
 mod:SetUsedIcons(5, 6, 7, 8)
-mod:SetMinSyncRevision(5050)
 
 mod:RegisterCombat("combat", 32930, 32933, 32934)
 

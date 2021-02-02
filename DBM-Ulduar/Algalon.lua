@@ -8,7 +8,6 @@ mod:RegisterCombat("combat", 32871)
 mod:RegisterCombat("yell", L.YellPull)
 mod:RegisterKill("yell", L.YellKill)
 mod:SetWipeTime(20)
-mod:SetMinSyncRevision(5050)
 
 mod:EnableModel()
 
