@@ -41,17 +41,17 @@ local specWarnChargeNear	= mod:NewSpecialWarning("SpecialWarningChargeNear")
 local specWarnTranq			= mod:NewSpecialWarning("SpecialWarningTranq", mod:CanRemoveEnrage())
 
 local enrageTimer			= mod:NewBerserkTimer(223)
-local timerCombatStart		= mod:NewTimer(17.5, "TimerCombatStart", 2457)
-local timerNextBoss			= mod:NewTimer(190, "TimerNextBoss", 2457)
+local timerCombatStart		= mod:NewTimer(21.5, "TimerCombatStart", 2457)
+local timerNextBoss			= mod:NewTimer(195, "TimerNextBoss", 2457)
 local timerSubmerge			= mod:NewTimer(42, "TimerSubmerge", "Interface\\AddOns\\DBM-Core\\textures\\CryptFiendBurrow.blp") 
 local timerEmerge			= mod:NewTimer(6, "TimerEmerge", "Interface\\AddOns\\DBM-Core\\textures\\CryptFiendUnBurrow.blp")
 
 local timerBreath			= mod:NewCastTimer(5, 67650)
-local timerNextStomp		= mod:NewNextTimer(20, 66330)
-local timerNextImpale		= mod:NewNextTimer(10, 67477, nil, mod:IsTank() or mod:IsHealer())
+local timerNextStomp		= mod:NewNextTimer(21.5, 66330)
+local timerNextImpale		= mod:NewNextTimer(20.5, 67477)
 local timerRisingAnger      = mod:NewNextTimer(20.5, 66636)
 local timerStaggeredDaze	= mod:NewBuffActiveTimer(15, 66758)
-local timerNextCrash		= mod:NewCDTimer(70, 67662) -- Original timer. The second Massive Crash should happen 70 seconds after the first
+local timerNextCrash		= mod:NewCDTimer(57, 67662) -- Original timer. The second Massive Crash should happen 70 seconds after the first
 local timerNextCrashTwo		= mod:NewCDTimer(71, 67662, "2nd Massive Crash") -- Added timer to start a second Massive Crash timer at the start of Icehowl. The second Massive Crash happens 122 seconds into the Icehowl fight
 local timerSweepCD			= mod:NewCDTimer(17, 66794, nil, mod:IsMelee())
 local timerSlimePoolCD		= mod:NewCDTimer(12, 66883, nil, mod:IsMelee())
@@ -77,6 +77,9 @@ local DreadscaleActive		= true  	-- Is dreadscale moving?
 local DreadscaleDead		= false
 local AcidmawDead			= false
 
+local timersStarted = false
+local pull_timer_offset = 0
+
 local function updateHealthFrame(phase)
 	if phases[phase] then
 		return
@@ -101,14 +104,17 @@ function mod:OnCombatStart(delay)
 	DreadscaleActive = true
 	DreadscaleDead = false
 	AcidmawDead = false
-	specWarnSilence:Schedule(37-delay)
+
+	specWarnSilence:Schedule(41.5-delay)
 	if self:IsDifficulty("heroic10", "heroic25") then
-		timerNextBoss:Start(175 - delay)
-		timerNextBoss:Schedule(170)
+		timerNextBoss:Start(170-delay)
+		timerNextBoss:Schedule(170-delay)
 	end
-	timerNextStomp:Start(38-delay)
-	timerRisingAnger:Start(48-delay)
+	timerNextStomp:Start(43-delay)
+	timerRisingAnger:Start(42-delay)
+	timerNextImpale:Start(32-delay)
 	timerCombatStart:Start(-delay)
+
 	updateHealthFrame(1)
 	self.vb.phase = 1
 end
@@ -117,6 +123,7 @@ function mod:OnCombatEnd()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
 	end
+	timersStarted = false
 end
 
 function mod:warnToxin()
@@ -173,9 +180,11 @@ function mod:SPELL_AURA_APPLIED(args)
 	if args:IsSpellID(67477, 66331, 67478, 67479) then		-- Impale
 		timerNextImpale:Start()
 		warnImpaleOn:Show(args.destName)
+		DBM:DebugPrint("SPELL_AURA_APPLIED_Impale")
 	elseif args:IsSpellID(67657, 66759, 67658, 67659) then	-- Frothing Rage
 		warnRage:Show()
 		specWarnTranq:Show()
+		DBM:DebugPrint("SPELL_AURA_APPLIED_Frothing Rage")
 	elseif args:IsSpellID(66823, 67618, 67619, 67620) then	-- Paralytic Toxin
 		self:UnscheduleMethod("warnToxin")
 		toxinTargets[#toxinTargets + 1] = args.destName
@@ -183,8 +192,10 @@ function mod:SPELL_AURA_APPLIED(args)
 			specWarnToxin:Show()
 		end
 		mod:ScheduleMethod(0.2, "warnToxin")
+		DBM:DebugPrint("SPELL_AURA_APPLIED_Paralytic Toxin")
 	elseif args:IsSpellID(66869) then		-- Burning Bile
 		self:UnscheduleMethod("warnBile")
+		DBM:DebugPrint("SPELL_AURA_APPLIED_Burning Bile")
 		bileTargets[#bileTargets + 1] = args.destName
 		if args:IsPlayer() then
 			specWarnBile:Show()
@@ -195,18 +206,22 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		mod:ScheduleMethod(0.2, "warnBile")
 	elseif args:IsSpellID(66758) then
+		DBM:DebugPrint("SPELL_AURA_APPLIED_StaggeredDaze")
 		timerStaggeredDaze:Start()
 	elseif args:IsSpellID(66636) then			-- Rising Anger
 		WarningSnobold:Show()
 		timerRisingAnger:Show()
+		DBM:DebugPrint("SPELL_AURA_APPLIED_Rising Anger")
 	elseif args:IsSpellID(68335) then
 		warnEnrageWorm:Show()
+		DBM:DebugPrint("SPELL_AURA_APPLIED_EnrageWorm")
 	end
 end
 
 function mod:SPELL_AURA_APPLIED_DOSE(args)
 	if args:IsSpellID(67477, 66331, 67478, 67479) then		-- Impale
 		timerNextImpale:Start()
+		DBM:DebugPrint("SPELL_AURA_APPLIED_DOSE_Impale")
 		warnImpaleOn:Show(args.destName)
 		if (args.amount >= 3 and not self:IsDifficulty("heroic10", "heroic25") ) or ( args.amount >= 2 and self:IsDifficulty("heroic10", "heroic25") ) then 
 			if args:IsPlayer() then
@@ -215,6 +230,7 @@ function mod:SPELL_AURA_APPLIED_DOSE(args)
 		end
 	elseif args:IsSpellID(66636) then			-- Rising Anger
 		WarningSnobold:Show()
+		DBM:DebugPrint("SPELL_AURA_APPLIED_DOSE_Rising Anger")
 		if args.amount <= 3 then
 			timerRisingAnger:Show()
 		elseif args.amount >= 3 then
@@ -227,21 +243,31 @@ function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(66689, 67650, 67651, 67652) then			-- Arctic Breath
 		timerBreath:Start()
 		warnBreath:Show()
+		DBM:DebugPrint("SPELL_CAST_START_Arctic Breath")
 	elseif args:IsSpellID(66313) then							-- FireBomb (Impaler)
 		warnFireBomb:Show()
+		DBM:DebugPrint("SPELL_CAST_START_FireBomb (Impaler)")
 	elseif args:IsSpellID(66330, 67647, 67648, 67649) then		-- Staggering Stomp
 		timerNextStomp:Start()
-		specWarnSilence:Schedule(19)							-- prewarn ~1,5 sec before next
+		specWarnSilence:Schedule(20)							-- prewarn ~1,5 sec before next
+		DBM:DebugPrint("SPELL_CAST_START_Staggering Stomp")
 	elseif args:IsSpellID(66794, 67644, 67645, 67646) then		-- Sweep stationary worm
 		timerSweepCD:Start()
+		DBM:DebugPrint("SPELL_CAST_START_Sweep stationary worm")
 	elseif args:IsSpellID(66821) then							-- Molten spew
 		timerMoltenSpewCD:Start()
+		DBM:DebugPrint("SPELL_CAST_START_Molten spew")
 	elseif args:IsSpellID(66818) then							-- Acidic Spew
 		timerAcidicSpewCD:Start()
+		DBM:DebugPrint("SPELL_CAST_START_Acidic Spew")
 	elseif args:IsSpellID(66901, 67615, 67616, 67617) then		-- Paralytic Spray
 		timerParalyticSprayCD:Start()
+		DBM:DebugPrint("SPELL_CAST_START_Paralytic Spray")
 	elseif args:IsSpellID(66902, 67627, 67628, 67629) then		-- Burning Spray
 		timerBurningSprayCD:Start()
+		DBM:DebugPrint("SPELL_CAST_START_Burning Spray")
+	elseif args:IsSpellID(66683, 67660, 67661, 67662) then		-- Massive Crash
+		DBM:DebugPrint("SPELL_CAST_START_MassiveCrash")
 	end
 end
 
@@ -249,18 +275,23 @@ function mod:SPELL_CAST_SUCCESS(args)
 	if args:IsSpellID(67641, 66883, 67642, 67643) then			-- Slime Pool Cloud Spawn
 		warnSlimePool:Show()
 		timerSlimePoolCD:Show()
+		DBM:DebugPrint("SPELL_CAST_SUCCESS_SlimePoolCloudSpawn")
 	elseif args:IsSpellID(66824, 67612, 67613, 67614) then		-- Paralytic Bite
 		timerParalyticBiteCD:Start()
+		DBM:DebugPrint("SPELL_CAST_SUCCESS_ParalyticBite")
 	elseif args:IsSpellID(66879, 67624, 67625, 67626) then		-- Burning Bite
 		timerBurningBiteCD:Start()
+		DBM:DebugPrint("SPELL_CAST_SUCCESS_BurningBite")
 	end
 end
 
 function mod:SPELL_DAMAGE(args)
 	if args:IsPlayer() and (args:IsSpellID(66320, 67472, 67473, 67475) or args:IsSpellID(66317)) then	-- Fire Bomb (66317 is impact damage, not avoidable but leaving in because it still means earliest possible warning to move. Other 4 are tick damage from standing in it)
 		specWarnFireBomb:Show()
+		--DBM:DebugPrint("SPELL_DAMAGE_FireBomb")
 	elseif args:IsPlayer() and args:IsSpellID(66881, 67638, 67639, 67640) then							-- Slime Pool
 		specWarnSlimePool:Show()
+		--DBM:DebugPrint("SPELL_DAMAGE_SlimePool")
 	end
 end
 
@@ -320,8 +351,8 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 			enrageTimer:Start()
 		end
 		self:UnscheduleMethod("WormsSubmerge")
-		timerNextCrash:Start(52)
-		timerNextCrashTwo:Schedule(52)
+		timerNextCrash:Start(40)
+		--timerNextCrashTwo:Schedule(52)
 		timerNextBoss:Cancel()
 		timerSubmerge:Cancel()
 		if self.Options.RangeFrame then

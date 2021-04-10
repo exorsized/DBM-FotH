@@ -46,8 +46,9 @@ local debuffTargets					= {}
 local debuffIcon					= 8
 
 function mod:OnCombatStart(delay)
-	timerSpecial:Start(-delay)
-	warnSpecial:Schedule(40-delay)
+	timerSpecial:Start(50-delay)
+	DBM:DebugPrint("CombatStart")
+	warnSpecial:Schedule(45-delay)
 	timerAchieve:Start(-delay)
 	if self:IsDifficulty("heroic10", "heroic25") then
 		enrageTimer:Start(360-delay)
@@ -88,6 +89,7 @@ function mod:SpecialAbility(debuff)
 	end
 	timerSpecial:Start()
 	warnSpecial:Schedule(40)
+	DBM:DebugPrint("SpecialAbility")
 end
 
 function mod:resetDebuff()

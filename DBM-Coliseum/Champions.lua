@@ -16,8 +16,16 @@ mod:RegisterEvents(
 	"UNIT_DIED"
 )
 
+local leaderFaction = "faction"
 
-if UnitFactionGroup("player") == "Alliance" then
+for i = 1, GetNumRaidMembers() do
+	local name, rank, subgroup, _, _, fileName = GetRaidRosterInfo(i)
+	if rank == 2 then
+		leaderFaction = UnitFactionGroup("raid"..i)
+	end
+end
+
+if leaderFaction == "Alliance" then
 	--mod:RegisterKill("yell", L.AllianceVictory)
 	mod:SetBossHealthInfo(
 	-- Horde

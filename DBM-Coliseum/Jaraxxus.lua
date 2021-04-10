@@ -6,6 +6,7 @@ mod:SetCreatureID(34780)
 mod:SetMinCombatTime(30)
 mod:SetUsedIcons(7, 8)
 
+mod:RegisterCombat("yell", L.YellPull)
 mod:RegisterCombat("combat")
 
 mod:RegisterEvents(
@@ -43,11 +44,11 @@ local specWarnFelInferno		= mod:NewSpecialWarningMove(68718)
 local SpecWarnFelFireball		= mod:NewSpecialWarning("SpecWarnFelFireball", false)
 local SpecWarnFelFireballDispel	= mod:NewSpecialWarningDispel(66965, isMagicDispeller)
 
-local timerCombatStart			= mod:NewTimer(76.3, "TimerCombatStart", 2457)--roleplay for first pull
+local timerCombatStart			= mod:NewTimer(82.3, "TimerCombatStart", 2457)--roleplay for first pull
 local enrageTimer				= mod:NewBerserkTimer(600)
 local timerFlame 				= mod:NewTargetTimer(8, 68123)--There are 8 debuff Ids. Since we detect first to warn, use an 8sec timer to cover duration of trigger spell and damage debuff.
 local timerFlameCD				= mod:NewCDTimer(30, 68125)
-local timerNetherPowerCD		= mod:NewCDTimer(45, 67009)
+local timerNetherPowerCD		= mod:NewCDTimer(43, 67009)
 local timerFlesh				= mod:NewTargetTimer(12, 67049)
 local timerFleshCD				= mod:NewCDTimer(23, 67051) 
 local timerPortalCD				= mod:NewCDTimer(120, 67900)
@@ -67,17 +68,18 @@ function mod:OnCombatStart(delay)
 		DBM.BossHealth:Show(L.name)
 		DBM.BossHealth:AddBoss(34780, L.name)
 	end
-	timerPortalCD:Start(22-delay)
-	timerPortalTwo:Schedule(22)
-	warnPortalSoon:Schedule(17-delay)
-	warnPortalTwoSoon:Schedule(137-delay)
-	timerVolcanoCD:Start(82-delay)
-	warnVolcanoSoon:Schedule(77-delay)
-    timerNetherPowerCD:Start(15-delay)
-	warnNetherPowerSoon:Schedule(10-delay)
+	timerPortalCD:Start(20-delay)
+	--timerPortalTwo:Schedule(22)
+	warnPortalSoon:Schedule(15-delay)
+	--warnPortalTwoSoon:Schedule(137-delay)
+	timerVolcanoCD:Start(80-delay)
+	warnVolcanoSoon:Schedule(75-delay)
+    timerNetherPowerCD:Start(60-delay)
+	warnNetherPowerSoon:Schedule(55-delay)
 	timerFleshCD:Start(14-delay)
 	timerFlameCD:Start(20-delay)
 	enrageTimer:Start(-delay)
+	DBM:DebugPrint("CombatStart")
 end
 
 function mod:OnCombatEnd()
@@ -145,6 +147,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnFlesh:Show(args.destName)
 		timerFlesh:Start(args.destName)
 		timerFleshCD:Start()
+		DBM:DebugPrint("SPELL_AURA_APPLIED_Incinerate Flesh")
 		if self.Options.IncinerateFleshIcon then
 			self:SetIcon(args.destName, 8, 15)
 		end
@@ -153,17 +156,18 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		setIncinerateTarget(self, args.destGUID, args.destName)
 		self:Schedule(15, clearIncinerateTarget, self, args.destName)
-	elseif args:IsSpellID(66228, 67108, 67106, 67107) then	
+	elseif args:IsSpellID(66228, 67108, 67106, 67107) then
 		timerNetherPowerCD:Stop()							-- Nether Power
 		timerNetherPowerCD:Start()
 		warnNetherPowerSoon:Schedule(40)
 		specWarnNetherPower:Show()
 		warnNetherPower:Show()
-
+		DBM:DebugPrint("SPELL_AURA_APPLIED_Nether Power")
 	elseif args:IsSpellID(66197, 68123, 68124, 68125) then		-- Legion Flame ids 66199, 68126, 68127, 68128 (second debuff) do the actual damage. First 2 seconds are trigger debuff only.
 		local targetname = args.destName
 		timerFlame:Start(args.destName)
-		timerFlameCD:Start()		
+		timerFlameCD:Start()	
+		DBM:DebugPrint("SPELL_AURA_APPLIED_Legion Flame")	
 		if args:IsPlayer() then
 			specWarnFlame:Show()
 			if self.Options.LegionFlameRunSound then
@@ -178,10 +182,11 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	elseif args:IsSpellID(66334, 67905, 67906, 67907) and args:IsPlayer() then
 		specWarnKiss:Show()
-
+		DBM:DebugPrint("SPELL_AURA_APPLIED_Incinerate Flesh")
 	elseif args:IsSpellID(66532, 66963, 66964, 66965) then		-- Fel Fireball (announce if tank gets debuff for dispel)
 		warnFelFireball:Show()
 		SpecWarnFelFireballDispel:Show(args.destName)
+		DBM:DebugPrint("SPELL_AURA_APPLIED_Fel Fireball")
 	end
 end
 
@@ -189,12 +194,14 @@ function mod:SPELL_AURA_REMOVED(args)
 	if args:IsSpellID(67051, 67050, 67049, 66237) then			-- Incinerate Flesh
 		timerFlesh:Stop()
 		clearIncinerateTarget(self, args.destName)
+		DBM:DebugPrint("SPELL_AURA_REMOVED_Incinerate Flesh")
 	end
 end
 
 function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(66532, 66963, 66964, 66965) and UnitName("target") == L.name then	-- Fel Fireball (track cast for interupt, only when targeted)
 		SpecWarnFelFireball:Show()
+		DBM:DebugPrint("SPELL_CAST_START_Fel Fireball")
 	end
 end
 
@@ -204,22 +211,27 @@ function mod:SPELL_CAST_SUCCESS(args)
 		timerNetherPowerCD:Start()
 		warnNetherPowerSoon:Schedule(35)
 		specWarnNetherPower:Show()
+		DBM:DebugPrint("SPELL_CAST_SUCCESS_Nether Power")
 
 	elseif args:IsSpellID(67901, 67902, 67903, 66258) then		-- Infernal Volcano
 		timerVolcanoCD:Start()
 		warnVolcanoSoon:Schedule(110)
+		DBM:DebugPrint("SPELL_CAST_SUCCESS_Infernal Volcano")
 
 	elseif args:IsSpellID(67900, 67899, 67898, 66269) then		-- Nether Portal
 		timerPortalCD:Start()
 		warnPortalSoon:Schedule(110)
+		DBM:DebugPrint("SPELL_CAST_SUCCESS_Nether Portal")
 	
 	elseif args:IsSpellID(66197, 68123, 68124, 68125) then		-- Legion Flame
 		warnFlame:Show(args.destName)
+		DBM:DebugPrint("SPELL_CAST_SUCCESS_Legion Flame")
 	end
 end
 
 function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if msg == L.FirstPull or msg:find(L.FirstPull) then
 		timerCombatStart:Start()
+		DBM:DebugPrint("EventStart")
 	end
 end

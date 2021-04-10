@@ -12,6 +12,8 @@ L:SetGeneralLocalization{
 L:SetMiscLocalization{
 	Charge		= "^%%s glares at (%S+) and lets out",
 	CombatStart	= "Hailing from the deepest, darkest caverns of the Storm Peaks, Gormok the Impaler! Battle on, heroes!",
+	FirstStart	= "Welcome, champions! You have heard the call of the Argent Crusade and you have boldly answered! It is here, in the Crusaders' Coliseum, that you will face your greatest challenges. Those of you who survive the rigors of the coliseum will join the Argent Crusade on its march to Icecrown Citadel.",
+	CombatStartBackup = "I've seen more worthy challenges in the Ring of Blood. You waste our time, paladin.",
 	Phase2		= "Steel yourselves, heroes, for the twin terrors, Acidmaw and Dreadscale, enter the arena!",
 	Phase3		= "The air itself freezes with the introduction of our next combatant, Icehowl! Kill or be killed, champions!",
 	Gormok		= "Gormok the Impaler",
@@ -99,7 +101,8 @@ L:SetOptionLocalization{
 }
 
 L:SetMiscLocalization{
-	FirstPull	= "Grand Warlock Wilfred Fizzlebang will summon forth your next challenge. Stand by for his entry."
+	FirstPull	= "Grand Warlock Wilfred Fizzlebang will summon forth your next challenge. Stand by for his entry.",
+	YellPull	= "You face Jaraxxus, Eredar Lord of the Burning Legion!"
 }
 
 -------------------------

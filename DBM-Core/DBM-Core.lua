@@ -140,6 +140,8 @@ DBM.DefaultOptions = {
 DBM.Bars = DBT:New()
 DBM.Mods = {}
 
+debugMode = false
+
 ------------------------
 -- Global Identifiers --
 ------------------------
@@ -717,6 +719,10 @@ SlashCmdList["DEADLYBOSSMODS"] = function(msg)
 		DBM.Bars:ShowMovableBar()
 	elseif cmd == "help" then
 		for i, v in ipairs(DBM_CORE_SLASHCMD_HELP) do DBM:AddMsg(v) end
+	elseif cmd == "debug on" then
+		debugMode = true
+	elseif cmd == "debug off" then
+		debugMode = false
 	elseif cmd:sub(1, 10) == "collapsing" then
 		local token_num = 1
 		local star_num = 0
@@ -1229,6 +1235,15 @@ do
 	end
 end
 
+---------------
+--  Debug  --
+---------------
+
+do
+	function DBM:DebugPrint(msg)
+		if debugMode then print(msg) end
+	end
+end
 
 ---------------
 --  Options  --
