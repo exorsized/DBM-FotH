@@ -60,7 +60,7 @@ f:SetScript("OnUpdate", fCLFix)
 DBM = {
 	Revision = ("$Revision: 5050 $"):sub(12, -3),
 	Version = "5.05",
-	DisplayVersion = "5.05 DBM-FotH v2.2 by Exorsized", -- the string that is shown as version
+	DisplayVersion = "5.05 DBM-FotH v2.3 by Exorsized", -- the string that is shown as version
 	ReleaseRevision = 5050 -- the revision of the latest stable version that is available (for /dbm ver2)
 }
 
